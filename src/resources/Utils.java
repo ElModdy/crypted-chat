@@ -8,7 +8,7 @@ public class Utils {
 		return Arrays.copyOfRange(message, 1, (message[0] & 0xFF) + 1);
 	}
 	
-	public static byte[] componeMessage(byte[]... pieces) {
+	public static byte[] buildMessage(byte[]... pieces) {
 		byte[] message = new byte[Stream.of(pieces).mapToInt(e -> e.length).sum()];
 		int index = 0;
 		for (byte[] piece : pieces) {
@@ -16,5 +16,5 @@ public class Utils {
 			index += piece.length;
 		}
 		return message;
-	}
+	}	
 }

@@ -39,29 +39,21 @@ public class Client {
 		}).start();
 	}
 
-	private byte[] encrypt(String message) {
-		byte[] messageBytes = message.getBytes();
-		int len = messageBytes.length;
-		int block = crypt.getBlockSize();
-		byte[] wrappedMessage = new byte[(int)(Math.ceil((float)len/block) * block)];
-		System.arraycopy(messageBytes, 0, wrappedMessage, 0, len);
-		return wrappedMessage;
-	}
 	
 	public void connect() {
 		try (OutputStream out = server.getOutputStream();
 				Scanner SysIn = new Scanner(System.in);) {
-			byte[] message = Utils.componeMessage(username.getBytes(),
+			byte[] message = Utils.buildMessage(username.getBytes(),
 					new byte[] {0},
 					algorithm.getBytes(),
 					new byte[] {0},
 					crypt.getKeyBytes());
-			message = Utils.componeMessage(new byte[] {(byte)message.length}, message); 
+			message = Utils.buildMessage(new byte[] {(byte)message.length}, message); 
 			out.write(message);
 			out.flush();
-			while ((message = encrypt(SysIn.nextLine())) != null) {
+			while ((message = SysIn.nextLine().getBytes()) != null) {
 				message = crypt.encrypt(message);
-				message = Utils.componeMessage(new byte[] {(byte)message.length}, message);
+				message = Utils.buildMessage(new byte[] {(byte)message.length}, message);
 				out.write(message);
 				out.flush();
 			}

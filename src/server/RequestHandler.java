@@ -30,18 +30,15 @@ public class RequestHandler implements Runnable {
 		while(n != 2)
 			if(message[i++] == 0)
 				delPosition[n++] = i - 1;
-		
 		username = Arrays.copyOfRange(message, 0, delPosition[0]++);
-		String alg = new String(Arrays.copyOfRange(message, delPosition[0], delPosition[1]++));
-		byte[] key = Arrays.copyOfRange(message, delPosition[1], message.length);
-		crypt = new Crypt(alg,
-				key);
+		crypt = new Crypt(new String(Arrays.copyOfRange(message, delPosition[0], delPosition[1]++)),
+				Arrays.copyOfRange(message, delPosition[1], message.length));
 	}
 	
 	public void sendMessage(byte[] message){			
 		try {
 			message = crypt.encrypt(message);
-			writer.write(Utils.componeMessage(new byte[] {(byte)message.length}, message));
+			writer.write(Utils.buildMessage(new byte[] {(byte)message.length}, message));
 			writer.flush();
 		} catch (IOException e) {
 			removeClient();
@@ -65,11 +62,11 @@ public class RequestHandler implements Runnable {
 			in.read(message);
 			inizializeClient(Utils.getContent(message));
 			while (in.read(message) != -1)
-				sendMessageToAllClients(Utils.componeMessage(username, 
+				sendMessageToAllClients(Utils.buildMessage(username, 
 						" : ".getBytes(),
-						crypt.decrypt(Utils.getContent(message))));
+						new String(crypt.decrypt(Utils.getContent(message))).trim().getBytes()));
 		} catch (Exception e) {
-			System.out.println(e);
+			e.printStackTrace();
 			removeClient();
 		}
 	}

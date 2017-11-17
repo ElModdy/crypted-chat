@@ -30,7 +30,7 @@ public class Crypt {
         return cipher.doFinal(inputBytes);
     }
 
-    public byte[] decrypt(byte[] cryptedBytes) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException  {
+    public byte[] decrypt(byte[] cryptedBytes) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException  {   	
         cipher.init(Cipher.DECRYPT_MODE, key);
         return cipher.doFinal(cryptedBytes);
     }
