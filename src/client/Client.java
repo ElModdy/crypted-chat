@@ -24,17 +24,13 @@ public class Client {
 		crypt = new Crypt(algorithm);
 		server = new Socket(address, port);
 		
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try(InputStream in = server.getInputStream()){
-					byte[] message = new byte[255];
-					while (in.read(message) != -1) {
-						System.out.println(new String(crypt.decrypt(Utils.getContent(message))).trim());
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+		new Thread(() -> {
+			try(InputStream in = server.getInputStream()){
+				byte[] message = new byte[255];
+				while (in.read(message) != -1) 
+					System.out.println(new String(crypt.decrypt(Utils.getContent(message))).trim());
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}).start();
 	}
